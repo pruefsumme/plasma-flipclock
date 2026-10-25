@@ -54,5 +54,13 @@
       <label>Free text printed on the lower strip of the minute card.</label>
       <default></default>
     </entry>
+    <entry name="widgetWidth" type="Int">
+      <label>Last widget width. 0 means use the default.</label>
+      <default>0</default>
+    </entry>
+    <entry name="widgetHeight" type="Int">
+      <label>Last widget height. 0 means use the default.</label>
+      <default>0</default>
+    </entry>
   </group>
 </kcfg>

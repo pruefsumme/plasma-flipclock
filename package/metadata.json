@@ -14,7 +14,7 @@
         "Id": "io.github.pruefsumme.flipclock",
         "License": "AGPL-3.0-or-later",
         "Name": "Flip Clock",
-        "Version": "0.1.2",
+        "Version": "0.1.3",
         "Website": "https://github.com/pruefsumme/plasma-flipclock"
     },
     "FormFactors": [

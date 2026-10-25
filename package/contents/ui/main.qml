@@ -34,8 +34,34 @@ PlasmoidItem {
     // `Layout.preferredHeight: Layout.preferredWidth * ratio`) re-fires when
     // the paired property is restored and silently clobbers the just-restored
     // value, snapping the widget back to its default size every restart.
-    width: Kirigami.Units.gridUnit * 28
-    height: Kirigami.Units.gridUnit * 28 * S.REF_H / S.REF_W
+    //
+    // The containment's saved geometry is keyed by screen resolution and can
+    // miss at boot, so we also keep the last size in our own config.
+    width: Plasmoid.configuration.widgetWidth > 0
+            ? Plasmoid.configuration.widgetWidth
+            : Kirigami.Units.gridUnit * 28
+    height: Plasmoid.configuration.widgetHeight > 0
+             ? Plasmoid.configuration.widgetHeight
+             : Kirigami.Units.gridUnit * 28 * S.REF_H / S.REF_W
+
+    // Skip the startup relayout, then save resizes once they settle.
+    Timer {
+        id: startupGuard
+        interval: 5000
+        running: true
+    }
+    Timer {
+        id: saveSize
+        interval: 1000
+        onTriggered: {
+            if (root.width > 0 && root.height > 0) {
+                Plasmoid.configuration.widgetWidth = Math.round(root.width)
+                Plasmoid.configuration.widgetHeight = Math.round(root.height)
+            }
+        }
+    }
+    onWidthChanged: if (!startupGuard.running) saveSize.restart()
+    onHeightChanged: if (!startupGuard.running) saveSize.restart()
 
     // The widget draws its own skeuomorphic body, so no Plasma frame behind it;
     // ConfigurableBackground still lets the user switch one back on.
@@ -206,8 +232,12 @@ PlasmoidItem {
         // Layout.preferredWidth) of this item.
         Layout.minimumWidth: Kirigami.Units.gridUnit * 10
         Layout.minimumHeight: Kirigami.Units.gridUnit * 10 * S.REF_H / S.REF_W
-        Layout.preferredWidth: Kirigami.Units.gridUnit * 28
-        Layout.preferredHeight: Kirigami.Units.gridUnit * 28 * S.REF_H / S.REF_W
+        Layout.preferredWidth: Plasmoid.configuration.widgetWidth > 0
+                ? Plasmoid.configuration.widgetWidth
+                : Kirigami.Units.gridUnit * 28
+        Layout.preferredHeight: Plasmoid.configuration.widgetHeight > 0
+                ? Plasmoid.configuration.widgetHeight
+                : Kirigami.Units.gridUnit * 28 * S.REF_H / S.REF_W
 
         FlipClock {
             anchors.fill: parent
